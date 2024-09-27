@@ -1,0 +1,6 @@
+CREATE DATABASE moodle;
+
+CREATE SCHEMA general;
+
+CREATE SCHEMA faculty;
+

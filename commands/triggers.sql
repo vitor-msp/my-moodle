@@ -1,0 +1,46 @@
+-- departments --
+CREATE OR REPLACE TRIGGER create_course_code_counter
+    AFTER INSERT ON faculty.departments
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.create_course_code_counter();
+
+CREATE OR REPLACE TRIGGER create_instructor_enrollment_code_counter
+    AFTER INSERT ON faculty.departments
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.create_instructor_enrollment_code_counter();
+
+-- degree_programs --
+CREATE OR REPLACE TRIGGER create_student_enrollment_code_counter
+    AFTER INSERT ON faculty.degree_programs
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.create_student_enrollment_code_counter();
+
+-- courses --
+CREATE OR REPLACE TRIGGER create_class_code_counter
+    AFTER INSERT ON faculty.courses
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.create_class_code_counter();
+
+CREATE OR REPLACE TRIGGER generate_course_code
+    BEFORE INSERT ON faculty.courses
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.generate_course_code();
+
+-- instructors --
+CREATE OR REPLACE TRIGGER generate_instructor_enrollment_code
+    BEFORE INSERT ON faculty.instructors
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.generate_instructor_enrollment_code();
+
+-- students --
+CREATE OR REPLACE TRIGGER generate_student_enrollment_code
+    BEFORE INSERT ON faculty.students
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.generate_student_enrollment_code();
+
+-- classes --
+CREATE OR REPLACE TRIGGER generate_class_code
+    BEFORE INSERT ON faculty.classes
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.generate_class_code();
+
