@@ -21,6 +21,9 @@ CREATE TABLE IF NOT EXISTS faculty.instructors(
     person_id int NOT NULL REFERENCES general.people(person_id) ON UPDATE CASCADE ON DELETE SET NULL,
     enrollment_code faculty.instructor_enrollment_code NOT NULL UNIQUE,
     department_id int NOT NULL REFERENCES faculty.departments(department_id),
+    max_course_load int NOT NULL DEFAULT 800,
+    current_course_load int NOT NULL DEFAULT 0,
+    active boolean DEFAULT TRUE,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );
@@ -31,11 +34,11 @@ CREATE TABLE IF NOT EXISTS faculty.courses(
     name varchar(50) NOT NULL,
     syllabus hstore,
     department_id int NOT NULL REFERENCES faculty.departments(department_id),
+    course_load int NOT NULL,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );
 
--- validar initial_date, final_date baseado na data atual
 CREATE TABLE IF NOT EXISTS faculty.classes(
     class_id serial PRIMARY KEY,
     code faculty.class_code NOT NULL UNIQUE,
@@ -44,6 +47,7 @@ CREATE TABLE IF NOT EXISTS faculty.classes(
     final_date date NOT NULL CHECK (final_date > initial_date),
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
+    in_progress boolean NOT NULL DEFAULT FALSE,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );
@@ -66,6 +70,9 @@ CREATE TABLE IF NOT EXISTS faculty.students(
     person_id int NOT NULL REFERENCES general.people(person_id) ON UPDATE CASCADE ON DELETE SET NULL,
     enrollment_code faculty.student_enrollment_code NOT NULL UNIQUE,
     degree_program_id int NOT NULL REFERENCES faculty.degree_programs(degree_program_id),
+    max_course_load int NOT NULL DEFAULT 400,
+    current_course_load int NOT NULL DEFAULT 0,
+    active boolean DEFAULT TRUE,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );
