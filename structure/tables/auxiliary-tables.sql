@@ -29,6 +29,7 @@ CREATE TABLE IF NOT EXISTS faculty.class_code_counters(
     class_code_counter_id serial PRIMARY KEY,
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     course_code char(6) NOT NULL,
+    year_semester char(5) NOT NULL DEFAULT general.get_year_semester(CURRENT_DATE),
     session faculty.session NOT NULL,
     counter int NOT NULL DEFAULT 0 CHECK (counter BETWEEN 0 AND 99),
     created_at timestamp NOT NULL,

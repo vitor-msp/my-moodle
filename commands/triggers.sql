@@ -67,3 +67,26 @@ CREATE OR REPLACE TRIGGER increment_lessons_in_class
     FOR EACH ROW
     EXECUTE FUNCTION faculty.increment_lessons_in_class();
 
+-- class_code_counters
+CREATE OR REPLACE TRIGGER set_course_code
+    BEFORE INSERT ON faculty.class_code_counters
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_course_code();
+
+-- course_code_counters
+CREATE OR REPLACE TRIGGER set_department_code
+    BEFORE INSERT ON faculty.course_code_counters
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_department_code();
+
+-- instructor_enrollment_code_counters
+CREATE OR REPLACE TRIGGER set_department_code
+    BEFORE INSERT ON faculty.instructor_enrollment_code_counters
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_department_code();
+
+-- student_enrollment_code_counters
+CREATE OR REPLACE TRIGGER set_degree_program_code
+    BEFORE INSERT ON faculty.student_enrollment_code_counters
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_degree_program_code();

@@ -68,8 +68,8 @@ CREATE OR REPLACE FUNCTION faculty.create_course_code_counter()
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    INSERT INTO faculty.course_code_counters(department_id, department_code)
-        VALUES(NEW.department_id, NEW.code);
+    INSERT INTO faculty.course_code_counters(department_id)
+        VALUES(NEW.department_id);
     RETURN NULL;
 END;
 $$;
@@ -79,8 +79,8 @@ CREATE OR REPLACE FUNCTION faculty.create_instructor_enrollment_code_counter()
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    INSERT INTO faculty.instructor_enrollment_code_counters(department_id, department_code)
-        VALUES(NEW.department_id, NEW.code);
+    INSERT INTO faculty.instructor_enrollment_code_counters(department_id)
+        VALUES(NEW.department_id);
     RETURN NULL;
 END;
 $$;
@@ -91,8 +91,8 @@ CREATE OR REPLACE FUNCTION faculty.create_student_enrollment_code_counter()
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    INSERT INTO faculty.student_enrollment_code_counters(degree_program_id, degree_program_code)
-        VALUES(NEW.degree_program_id, NEW.code);
+    INSERT INTO faculty.student_enrollment_code_counters(degree_program_id)
+        VALUES(NEW.degree_program_id);
     RETURN NULL;
 END;
 $$;
@@ -104,9 +104,9 @@ CREATE OR REPLACE FUNCTION faculty.create_class_code_counter()
     AS $$
 BEGIN
     INSERT INTO faculty.class_code_counters(course_id, course_code, session)
-        VALUES(NEW.course_id, NEW.code, 'M'),
-(NEW.course_id, NEW.code, 'T'),
-(NEW.course_id, NEW.code, 'N');
+        VALUES(NEW.course_id, 'M'),
+(NEW.course_id, 'T'),
+(NEW.course_id, 'N');
     RETURN NULL;
 END;
 $$;
@@ -210,6 +210,7 @@ CREATE OR REPLACE FUNCTION faculty.generate_class_code()
     AS $$
 DECLARE
     course_code char(6);
+    class_year_semester char(5);
     class_code_counter int;
 BEGIN
     -- gets course code
@@ -219,6 +220,8 @@ BEGIN
         faculty.courses c
     WHERE
         c.course_id = NEW.course_id;
+    -- gets class year_semester
+    class_year_semester := general.get_year_semester(NEW.initial_date);
     -- gets and increments counter
     UPDATE
         faculty.class_code_counters
@@ -226,11 +229,12 @@ BEGIN
         counter = counter + 1
     WHERE
         course_id = NEW.course_id
+        AND year_semester = class_year_semester
         AND session = NEW.class_session
     RETURNING
         counter INTO class_code_counter;
     -- generates class code
-    NEW.code := course_code || general.get_year_semester(NEW.initial_date) || NEW.class_session || lpad(class_code_counter::text, 2, '0');
+    NEW.code := course_code || class_year_semester || NEW.class_session || lpad(class_code_counter::text, 2, '0');
     RETURN NEW;
 END;
 $$;
@@ -274,6 +278,54 @@ BEGIN
     WHERE
         class_id = NEW.class_id;
     RETURN NULL;
+END;
+$$;
+
+-- class_code_counters
+CREATE OR REPLACE FUNCTION faculty.set_course_code()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    SELECT
+        c.code INTO NEW.course_code
+    FROM
+        faculty.courses c
+    WHERE
+        c.course_id = NEW.course_id;
+    RETURN NEW;
+END;
+$$;
+
+-- course_code_counters / instructor_enrollment_code_counters
+CREATE OR REPLACE FUNCTION faculty.set_department_code()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    SELECT
+        d.code INTO NEW.department_code
+    FROM
+        faculty.departments d
+    WHERE
+        d.department_id = NEW.department_id;
+    RETURN NEW;
+END;
+$$;
+
+-- student_enrollment_code_counters
+CREATE OR REPLACE FUNCTION faculty.set_degree_program_code()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    SELECT
+        d.degree_program_code INTO NEW.degree_program_code
+    FROM
+        faculty.degree_programs d
+    WHERE
+        d.degree_program_id = NEW.degree_program_id;
+    RETURN NEW;
 END;
 $$;
 

@@ -57,6 +57,7 @@ CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 5, 1)::faculty.creat
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 7, 1)::faculty.create_class_input);
 CALL faculty.create_class(('T', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2025-02-01', '2025-06-01', 4, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2023-02-01', '2023-06-01', 8, 2)::faculty.create_class_input);
 
 CALL faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
 CALL faculty.enroll_student_in_class((1, 12)::faculty.enroll_student_in_class_input);

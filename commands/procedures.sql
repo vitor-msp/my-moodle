@@ -164,3 +164,37 @@ END;
 
 $$;
 
+CREATE OR REPLACE PROCEDURE faculty.create_new_counters()
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    course record;
+    current_year_semester char(5);
+    _sqlstate text;
+    _message text;
+    _context text;
+BEGIN
+    current_year_semester := general.get_current_year_semester();
+    FOR course IN
+    SELECT
+        c.course_id
+    FROM
+        faculty.courses c LOOP
+            INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
+                VALUES (course.course_id, 'M', current_year_semester);
+            INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
+                VALUES (course.course_id, 'T', current_year_semester);
+            INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
+                VALUES (course.course_id, 'N', current_year_semester);
+        END LOOP;
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS _sqlstate = returned_sqlstate,
+        _message = message_text,
+        _context = pg_exception_context;
+    RAISE EXCEPTION 'sqlstate: %, message: %, context: %', _sqlstate, _message, _context;
+ROLLBACK;
+END;
+
+$$;
+
