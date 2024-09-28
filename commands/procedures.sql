@@ -3,6 +3,7 @@ LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
 AS $$
 DECLARE
+    instructor_is_active boolean;
     instructor_department int;
     course_department int;
     course_load_used int;
@@ -12,54 +13,56 @@ DECLARE
     _message text;
     _context text;
 BEGIN
+    -- gets instructor data
     SELECT
-        i.department_id INTO instructor_department
+        i.active,
+        i.max_course_load,
+        i.department_id INTO instructor_is_active,
+        max_course_load,
+        instructor_department
     FROM
         faculty.instructors i
     WHERE
         i.instructor_id = input.instructor_id;
-    --
+    -- checks if the instructor is active
+    IF NOT instructor_is_active THEN
+        RAISE EXCEPTION 'instructor % is not active', input.instructor_id;
+    END IF;
+    -- gets course department
     SELECT
         c.department_id INTO course_department
     FROM
         faculty.courses c
     WHERE
         c.course_id = input.course_id;
-    --
+    -- checks instructor and course departments
     IF instructor_department <> course_department THEN
         RAISE EXCEPTION 'the instructor can only teach classes from his department, instructor_department: %, course_department: %', instructor_department, course_department;
     END IF;
-    --
+    -- gets course load used by instructor
     SELECT
         coalesce(sum(co.course_load), 0) INTO course_load_used
     FROM
         faculty.classes cl
         INNER JOIN faculty.courses co USING (course_id)
     WHERE
-        cl.in_progress
+        general.class_is_in_progress(cl.year_semester)
         AND cl.instructor_id = input.instructor_id;
-    --
-    SELECT
-        i.max_course_load INTO max_course_load
-    FROM
-        faculty.instructors i
-    WHERE
-        i.instructor_id = input.instructor_id;
-    --
+    -- gets new course load of the instructor
     SELECT
         c.course_load INTO new_course_load
     FROM
         faculty.courses c
     WHERE
         c.course_id = input.course_id;
-    --
+    -- checks whether the course load exceeds the limit
     IF course_load_used + new_course_load > max_course_load THEN
         RAISE EXCEPTION 'course load exceeded for instructor_id %', input.instructor_id;
     END IF;
-    --
+    -- inserts new class
     INSERT INTO faculty.classes(class_session, initial_date, final_date, course_id, instructor_id)
         VALUES (input.class_session, input.initial_date, input.final_date, input.course_id, input.instructor_id);
-    --
+    -- updates instructor course load
     UPDATE
         faculty.instructors
     SET
@@ -91,6 +94,7 @@ DECLARE
     _message text;
     _context text;
 BEGIN
+    -- checks if the course prerequisites have been completed
     FOR prerequisite IN
     SELECT
         pr.prerequisite_id
@@ -110,7 +114,7 @@ BEGIN
                 RAISE EXCEPTION 'student % did not pass the course %', input.student_id, prerequisite.prerequisite_id;
             END IF;
         END LOOP;
-    --
+    -- gets course load used by student
     SELECT
         coalesce(sum(co.course_load), 0) INTO course_load_used
     FROM
@@ -118,17 +122,16 @@ BEGIN
         INNER JOIN faculty.classes cl USING (class_id)
         INNER JOIN faculty.courses co USING (course_id)
     WHERE
-        sc.active
-        AND cl.in_progress
+        general.class_is_in_progress(cl.year_semester)
         AND sc.student_id = input.student_id;
-    --
+    -- gets max course load for student
     SELECT
         s.max_course_load INTO max_course_load
     FROM
         faculty.students s
     WHERE
         s.student_id = input.student_id;
-    --
+    -- gets new course load of the student
     SELECT
         co.course_load INTO new_course_load
     FROM
@@ -136,14 +139,14 @@ BEGIN
         INNER JOIN faculty.courses co USING (course_id)
     WHERE
         cl.class_id = input.class_id;
-    --
+    -- checks whether the course load exceeds the limit
     IF course_load_used + new_course_load > max_course_load THEN
         RAISE EXCEPTION 'course load exceeded for student_id %', input.student_id;
     END IF;
-    --
+    -- inserts new enrollment
     INSERT INTO faculty.students_classes(student_id, class_id)
         VALUES (input.student_id, input.class_id);
-    --
+    -- updates student course load
     UPDATE
         faculty.students
     SET

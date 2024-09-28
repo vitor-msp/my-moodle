@@ -1,4 +1,4 @@
--- departments --
+-- departments
 CREATE OR REPLACE TRIGGER create_course_code_counter
     AFTER INSERT ON faculty.departments
     FOR EACH ROW
@@ -9,13 +9,13 @@ CREATE OR REPLACE TRIGGER create_instructor_enrollment_code_counter
     FOR EACH ROW
     EXECUTE FUNCTION faculty.create_instructor_enrollment_code_counter();
 
--- degree_programs --
+-- degree_programs
 CREATE OR REPLACE TRIGGER create_student_enrollment_code_counter
     AFTER INSERT ON faculty.degree_programs
     FOR EACH ROW
     EXECUTE FUNCTION faculty.create_student_enrollment_code_counter();
 
--- courses --
+-- courses
 CREATE OR REPLACE TRIGGER create_class_code_counter
     AFTER INSERT ON faculty.courses
     FOR EACH ROW
@@ -26,19 +26,19 @@ CREATE OR REPLACE TRIGGER generate_course_code
     FOR EACH ROW
     EXECUTE FUNCTION faculty.generate_course_code();
 
--- instructors --
+-- instructors
 CREATE OR REPLACE TRIGGER generate_instructor_enrollment_code
     BEFORE INSERT ON faculty.instructors
     FOR EACH ROW
     EXECUTE FUNCTION faculty.generate_instructor_enrollment_code();
 
--- students --
+-- students
 CREATE OR REPLACE TRIGGER generate_student_enrollment_code
     BEFORE INSERT ON faculty.students
     FOR EACH ROW
     EXECUTE FUNCTION faculty.generate_student_enrollment_code();
 
--- classes --
+-- classes
 CREATE OR REPLACE TRIGGER generate_class_code
     BEFORE INSERT ON faculty.classes
     FOR EACH ROW
@@ -49,18 +49,19 @@ CREATE OR REPLACE TRIGGER set_year_semester
     FOR EACH ROW
     EXECUTE FUNCTION faculty.set_year_semester();
 
--- activities --
+-- activities
 CREATE OR REPLACE TRIGGER increment_score_in_class
     AFTER INSERT ON faculty.activities
     FOR EACH ROW
     EXECUTE FUNCTION faculty.increment_score_in_class();
 
--- exams --
+-- exams
 CREATE OR REPLACE TRIGGER increment_score_in_class
     AFTER INSERT ON faculty.exams
     FOR EACH ROW
     EXECUTE FUNCTION faculty.increment_score_in_class();
 
+-- lessons
 CREATE OR REPLACE TRIGGER increment_lessons_in_class
     AFTER INSERT ON faculty.lessons
     FOR EACH ROW

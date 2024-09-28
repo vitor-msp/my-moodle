@@ -40,8 +40,8 @@ CREATE TABLE IF NOT EXISTS faculty.courses(
 );
 
 CREATE TABLE IF NOT EXISTS faculty.prerequisites(
-    course_id int not null REFERENCES faculty.courses(course_id),
-    prerequisite_id int not null REFERENCES faculty.courses(course_id),
+    course_id int NOT NULL REFERENCES faculty.courses(course_id),
+    prerequisite_id int NOT NULL REFERENCES faculty.courses(course_id),
     PRIMARY KEY (course_id, prerequisite_id),
     created_at timestamp NOT NULL,
     updated_at timestamp
@@ -56,7 +56,6 @@ CREATE TABLE IF NOT EXISTS faculty.classes(
     year_semester char(5) NOT NULL,
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
-    in_progress boolean NOT NULL DEFAULT FALSE,
     total_score real NOT NULL DEFAULT 0,
     minimum_grade real NOT NULL DEFAULT 60,
     total_lessons int NOT NULL DEFAULT 0,
@@ -123,7 +122,7 @@ CREATE TABLE IF NOT EXISTS faculty.grades(
     updated_at timestamp
 );
 
--- relationship tables --
+-- relationship tables
 CREATE TABLE IF NOT EXISTS faculty.instructors_courses(
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
@@ -152,7 +151,6 @@ CREATE TABLE IF NOT EXISTS faculty.students_classes(
     student_id int NOT NULL REFERENCES faculty.students(student_id),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
     PRIMARY KEY (student_id, class_id),
-    active boolean DEFAULT TRUE,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );

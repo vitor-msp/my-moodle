@@ -12,18 +12,16 @@ WITH base AS (
         cl.code AS class_code,
         cl.total_score AS total_score,
         cl.minimum_grade AS minimum_grade,
-        sum(gr.grade_value) AS student_grade,
+        sum(coalesce(gr.grade_value, 0)) AS student_grade,
         cl.total_lessons AS total_lessons,
         cl.minimum_lessons AS minimum_lessons
     FROM
         faculty.students st
-        LEFT OUTER JOIN general.people pe USING (person_id)
-        LEFT OUTER JOIN faculty.students_classes sc USING (student_id)
-        LEFT OUTER JOIN faculty.classes cl USING (class_id)
-        LEFT OUTER JOIN faculty.courses co USING (course_id)
+        INNER JOIN general.people pe USING (person_id)
+        INNER JOIN faculty.students_classes sc USING (student_id)
+        INNER JOIN faculty.classes cl USING (class_id)
+        INNER JOIN faculty.courses co USING (course_id)
         LEFT OUTER JOIN faculty.grades gr USING (student_id, class_id)
-    WHERE
-        sc.active
     GROUP BY
         st.student_id, st.enrollment_code, pe.name, cl.year_semester, co.course_id, co.code, co.name, cl.class_id, cl.code, cl.total_score, cl.minimum_grade, cl.total_lessons, cl.minimum_lessons
 )
