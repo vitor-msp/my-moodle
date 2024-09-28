@@ -45,9 +45,14 @@ CREATE TABLE IF NOT EXISTS faculty.classes(
     class_session faculty.session NOT NULL,
     initial_date date NOT NULL,
     final_date date NOT NULL CHECK (final_date > initial_date),
+    year_semester char(5) NOT NULL,
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
     in_progress boolean NOT NULL DEFAULT FALSE,
+    total_score real NOT NULL DEFAULT 0,
+    minimum_grade real NOT NULL DEFAULT 60,
+    total_lessons int NOT NULL DEFAULT 0,
+    minimum_lessons int NOT NULL DEFAULT 10,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );
@@ -82,7 +87,7 @@ CREATE TABLE IF NOT EXISTS faculty.activities(
     date date NOT NULL,
     initial_time time NOT NULL,
     final_time time NOT NULL CHECK (final_time > initial_time),
-    total_grade_value faculty.total_grade_value,
+    total_score real NOT NULL CHECK (total_score > 0),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
     created_at timestamp NOT NULL,
     updated_at timestamp
@@ -93,7 +98,7 @@ CREATE TABLE IF NOT EXISTS faculty.exams(
     date date NOT NULL,
     initial_time time NOT NULL,
     final_time time NOT NULL CHECK (final_time > initial_time),
-    total_grade_value faculty.total_grade_value,
+    total_score real NOT NULL CHECK (total_score > 0),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
     created_at timestamp NOT NULL,
     updated_at timestamp
@@ -101,7 +106,7 @@ CREATE TABLE IF NOT EXISTS faculty.exams(
 
 CREATE TABLE IF NOT EXISTS faculty.grades(
     grade_id serial PRIMARY KEY,
-    grade_value faculty.grade_value,
+    grade_value real NOT NULL CHECK (grade_value >= 0),
     student_id int NOT NULL REFERENCES faculty.students(student_id),
     exam_id int REFERENCES faculty.exams(exam_id),
     activity_id int REFERENCES faculty.activities(activity_id),
@@ -139,6 +144,7 @@ CREATE TABLE IF NOT EXISTS faculty.students_classes(
     student_id int NOT NULL REFERENCES faculty.students(student_id),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
     PRIMARY KEY (student_id, class_id),
+    active boolean DEFAULT TRUE,
     created_at timestamp NOT NULL,
     updated_at timestamp
 );

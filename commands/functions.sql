@@ -40,6 +40,26 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION general.get_year_semester(input_date date)
+    RETURNS char (
+        5)
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    year char(4);
+    semester char(1);
+BEGIN
+    year := extract(year FROM input_date);
+    SELECT
+        CASE WHEN extract(month FROM input_date)::int8 <@ '[1,6]'::int8range THEN
+            '1'
+        ELSE
+            '2'
+        END INTO semester;
+    RETURN year || semester;
+END;
+$$;
+
 -- departments --
 CREATE OR REPLACE FUNCTION faculty.create_course_code_counter()
     RETURNS TRIGGER
@@ -204,8 +224,60 @@ BEGIN
     RETURNING
         counter INTO class_code_counter;
     --
-    NEW.code := course_code || general.get_current_year_semester() || NEW.class_session || lpad(class_code_counter::text, 2, '0');
+    NEW.code := course_code || general.get_year_semester(NEW.initial_date) || NEW.class_session || lpad(class_code_counter::text, 2, '0');
     RETURN NEW;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION faculty.set_year_semester()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    year char(4);
+    semester char(1);
+BEGIN
+    year := extract(year FROM NEW.initial_date);
+    SELECT
+        CASE WHEN extract(month FROM NEW.initial_date)::int8 <@ '[1,6]'::int8range THEN
+            '1'
+        ELSE
+            '2'
+        END INTO semester;
+    NEW.year_semester := year || semester;
+    RETURN NEW;
+END;
+$$;
+
+-- activities / exams --
+CREATE OR REPLACE FUNCTION faculty.increment_score_in_class()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE
+        faculty.classes
+    SET
+        total_score = total_score + NEW.total_score
+    WHERE
+        class_id = NEW.class_id;
+    RETURN NULL;
+END;
+$$;
+
+-- lessons --
+CREATE OR REPLACE FUNCTION faculty.increment_lessons_in_class()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    UPDATE
+        faculty.classes
+    SET
+        total_lessons = total_lessons + 1
+    WHERE
+        class_id = NEW.class_id;
+    RETURN NULL;
 END;
 $$;
 

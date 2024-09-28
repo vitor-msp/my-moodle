@@ -51,4 +51,11 @@ select * from faculty.student_enrollment_code_counters;
 select * from faculty.class_code_counters;
 
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 2, 1)::faculty.create_class_input);
-call faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 1, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 3, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
+
+CALL faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 12)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 13)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 14)::faculty.enroll_student_in_class_input);

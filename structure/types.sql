@@ -4,10 +4,6 @@ CREATE TYPE faculty.session AS enum(
     'N'
 );
 
-CREATE DOMAIN faculty.total_grade_value AS real NOT NULL CHECK (value > 0);
-
-CREATE DOMAIN faculty.grade_value AS real NOT NULL CHECK (value >= 0);
-
 -- DCC, DAF
 CREATE DOMAIN faculty.department_code AS char(3) NOT NULL CHECK (value ~ '^[A-Z]{3}$');
 

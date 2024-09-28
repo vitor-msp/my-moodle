@@ -44,3 +44,25 @@ CREATE OR REPLACE TRIGGER generate_class_code
     FOR EACH ROW
     EXECUTE FUNCTION faculty.generate_class_code();
 
+CREATE OR REPLACE TRIGGER set_year_semester
+    BEFORE INSERT ON faculty.classes
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_year_semester();
+
+-- activities --
+CREATE OR REPLACE TRIGGER increment_score_in_class
+    AFTER INSERT ON faculty.activities
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.increment_score_in_class();
+
+-- exams --
+CREATE OR REPLACE TRIGGER increment_score_in_class
+    AFTER INSERT ON faculty.exams
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.increment_score_in_class();
+
+CREATE OR REPLACE TRIGGER increment_lessons_in_class
+    AFTER INSERT ON faculty.lessons
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.increment_lessons_in_class();
+

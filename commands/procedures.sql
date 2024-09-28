@@ -76,7 +76,8 @@ BEGIN
         INNER JOIN faculty.classes cl USING (class_id)
         INNER JOIN faculty.courses co USING (course_id)
     WHERE
-        cl.in_progress
+        sc.active
+        AND cl.in_progress
         AND sc.student_id = input.student_id;
     --
     SELECT
