@@ -1,0 +1,29 @@
+<curriculum degree_program_code="EGSFT" degree_program_name="eng software">
+    <period_1>
+        <course>
+            <course_code>DCC001</course_code>
+            <course_name>algoritmos 1</course_name>
+        </course>
+    </period_1>
+
+    <period_2>
+        <course>
+            <course_code>DCC003</course_code>
+            <course_name>arquitetura de computadores 1</course_name>
+        </course>
+    </period_2>
+    
+    <period_3>
+        <course>
+            <course_code>DCC002</course_code>
+            <course_name>redes de computadores 1</course_name>
+        </course>
+    </period_3>
+    
+    <period_4>
+        <course>
+            <course_code>DCC005</course_code>
+            <course_name>gerencia de projetos de software</course_name>
+        </course>
+    </period_4>
+</curriculum>
