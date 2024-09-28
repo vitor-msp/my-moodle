@@ -5,6 +5,7 @@ WITH base AS (
         st.enrollment_code AS student_enrollment_code,
         pe.name AS student_name,
         cl.year_semester AS year_semester,
+        co.course_id AS course_id,
         co.code AS course_code,
         co.name AS course_name,
         cl.class_id AS class_id,
@@ -24,14 +25,17 @@ WITH base AS (
     WHERE
         sc.active
     GROUP BY
-        st.student_id, st.enrollment_code, pe.name, cl.year_semester, co.code, co.name, cl.class_id, cl.code, cl.total_score, cl.minimum_grade, cl.total_lessons, cl.minimum_lessons
+        st.student_id, st.enrollment_code, pe.name, cl.year_semester, co.course_id, co.code, co.name, cl.class_id, cl.code, cl.total_score, cl.minimum_grade, cl.total_lessons, cl.minimum_lessons
 )
 SELECT
+    base.student_id AS student_id,
     base.student_enrollment_code AS student_enrollment_code,
     base.student_name AS student_name,
     base.year_semester AS year_semester,
+    base.course_id AS course_id,
     base.course_code AS course_code,
     base.course_name AS course_name,
+    base.class_id AS class_id,
     base.class_code AS class_code,
     base.total_score AS total_score,
     base.minimum_grade AS minimum_grade,
@@ -50,11 +54,14 @@ FROM
     LEFT OUTER JOIN faculty.lessons le USING (class_id)
     LEFT OUTER JOIN faculty.students_lessons sl USING (student_id, lesson_id)
 GROUP BY
+    base.student_id,
     base.student_enrollment_code,
     base.student_name,
     base.year_semester,
+    base.course_id,
     base.course_code,
     base.course_name,
+    base.class_id,
     base.class_code,
     base.total_score,
     base.minimum_grade,
@@ -65,6 +72,4 @@ ORDER BY
     student_name,
     year_semester,
     course_name WITH NO data;
-
-REFRESH MATERIALIZED VIEW faculty.academic_transcripts;
 

@@ -3,6 +3,8 @@ LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
 AS $$
 DECLARE
+    instructor_department int;
+    course_department int;
     course_load_used int;
     max_course_load int;
     new_course_load int;
@@ -10,6 +12,24 @@ DECLARE
     _message text;
     _context text;
 BEGIN
+    SELECT
+        i.department_id INTO instructor_department
+    FROM
+        faculty.instructors i
+    WHERE
+        i.instructor_id = input.instructor_id;
+    --
+    SELECT
+        c.department_id INTO course_department
+    FROM
+        faculty.courses c
+    WHERE
+        c.course_id = input.course_id;
+    --
+    IF instructor_department <> course_department THEN
+        RAISE EXCEPTION 'the instructor can only teach classes from his department, instructor_department: %, course_department: %', instructor_department, course_department;
+    END IF;
+    --
     SELECT
         coalesce(sum(co.course_load), 0) INTO course_load_used
     FROM
@@ -62,6 +82,8 @@ LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
 AS $$
 DECLARE
+    prerequisite record;
+    final_status text;
     course_load_used int;
     max_course_load int;
     new_course_load int;
@@ -69,6 +91,26 @@ DECLARE
     _message text;
     _context text;
 BEGIN
+    FOR prerequisite IN
+    SELECT
+        pr.prerequisite_id
+    FROM
+        faculty.classes cl
+        INNER JOIN faculty.prerequisites pr USING (course_id)
+    WHERE
+        cl.class_id = input.class_id LOOP
+            SELECT
+                a.final_status INTO final_status
+            FROM
+                faculty.academic_transcripts a
+            WHERE
+                a.student_id = input.student_id
+                AND a.course_id = prerequisite.prerequisite_id;
+            IF final_status <> 'passed' THEN
+                RAISE EXCEPTION 'student % did not pass the course %', input.student_id, prerequisite.prerequisite_id;
+            END IF;
+        END LOOP;
+    --
     SELECT
         coalesce(sum(co.course_load), 0) INTO course_load_used
     FROM

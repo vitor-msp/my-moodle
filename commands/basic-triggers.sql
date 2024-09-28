@@ -218,3 +218,14 @@ CREATE OR REPLACE TRIGGER class_code_counters_updated_at
     FOR EACH ROW
     EXECUTE FUNCTION general.updated_at();
 
+-- prerequisites --
+CREATE OR REPLACE TRIGGER prerequisites_created_at
+    BEFORE INSERT ON faculty.prerequisites
+    FOR EACH ROW
+    EXECUTE FUNCTION general.created_at();
+
+CREATE OR REPLACE TRIGGER prerequisites_updated_at
+    BEFORE UPDATE ON faculty.prerequisites
+    FOR EACH ROW
+    EXECUTE FUNCTION general.updated_at();
+

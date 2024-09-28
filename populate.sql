@@ -54,8 +54,15 @@ CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 2, 1)::faculty.creat
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 1, 1)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 3, 1)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 7, 1)::faculty.create_class_input);
+CALL faculty.create_class(('T', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2025-02-01', '2025-06-01', 4, 1)::faculty.create_class_input);
 
 CALL faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
 CALL faculty.enroll_student_in_class((1, 12)::faculty.enroll_student_in_class_input);
 CALL faculty.enroll_student_in_class((1, 13)::faculty.enroll_student_in_class_input);
 CALL faculty.enroll_student_in_class((1, 14)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 26)::faculty.enroll_student_in_class_input);
+
+REFRESH MATERIALIZED VIEW faculty.academic_transcripts;
+select * from faculty.academic_transcripts;

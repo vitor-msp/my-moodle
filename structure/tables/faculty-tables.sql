@@ -39,6 +39,14 @@ CREATE TABLE IF NOT EXISTS faculty.courses(
     updated_at timestamp
 );
 
+CREATE TABLE IF NOT EXISTS faculty.prerequisites(
+    course_id int not null REFERENCES faculty.courses(course_id),
+    prerequisite_id int not null REFERENCES faculty.courses(course_id),
+    PRIMARY KEY (course_id, prerequisite_id),
+    created_at timestamp NOT NULL,
+    updated_at timestamp
+);
+
 CREATE TABLE IF NOT EXISTS faculty.classes(
     class_id serial PRIMARY KEY,
     code faculty.class_code NOT NULL UNIQUE,
