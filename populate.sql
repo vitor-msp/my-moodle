@@ -67,3 +67,13 @@ CALL faculty.enroll_student_in_class((1, 26)::faculty.enroll_student_in_class_in
 
 REFRESH MATERIALIZED VIEW faculty.academic_transcripts;
 select * from faculty.academic_transcripts;
+
+update faculty.courses set syllabus='
+    "OSI" => "modelo osi",
+    "FIS" => "camada física",
+    "ENL" => "camada de enlace",
+    "RED" => "camada de rede",
+    "TRA" => "camada de transporte",
+    "APL" => "camada de aplicação",
+    "TIP" => "modelo tcp/ip"
+'::hstore where course_id=2;
