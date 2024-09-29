@@ -1,3 +1,4 @@
+-- missing validate if instructor teaches course
 CREATE OR REPLACE PROCEDURE faculty.create_class(input faculty.create_class_input)
 LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
@@ -85,6 +86,7 @@ LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
 AS $$
 DECLARE
+    student_is_active boolean;
     prerequisite record;
     final_status text;
     course_load_used int;
@@ -94,6 +96,19 @@ DECLARE
     _message text;
     _context text;
 BEGIN
+    -- gets student data
+    SELECT
+        s.active,
+        s.max_course_load INTO student_is_active,
+        max_course_load
+    FROM
+        faculty.students s
+    WHERE
+        s.student_id = input.student_id;
+    -- checks if the students is active
+    IF NOT student_is_active THEN
+        RAISE EXCEPTION 'student % is not active', input.student_id;
+    END IF;
     -- checks if the course prerequisites have been completed
     FOR prerequisite IN
     SELECT
@@ -110,7 +125,7 @@ BEGIN
             WHERE
                 a.student_id = input.student_id
                 AND a.course_id = prerequisite.prerequisite_id;
-            IF final_status <> 'passed' THEN
+            IF final_status IS NULL OR final_status <> 'passed' THEN
                 RAISE EXCEPTION 'student % did not pass the course %', input.student_id, prerequisite.prerequisite_id;
             END IF;
         END LOOP;
@@ -124,13 +139,6 @@ BEGIN
     WHERE
         general.class_is_in_progress(cl.year_semester)
         AND sc.student_id = input.student_id;
-    -- gets max course load for student
-    SELECT
-        s.max_course_load INTO max_course_load
-    FROM
-        faculty.students s
-    WHERE
-        s.student_id = input.student_id;
     -- gets new course load of the student
     SELECT
         co.course_load INTO new_course_load

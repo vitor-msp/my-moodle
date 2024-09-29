@@ -119,7 +119,7 @@ CREATE OR REPLACE FUNCTION faculty.create_class_code_counter()
     LANGUAGE plpgsql
     AS $$
 BEGIN
-    INSERT INTO faculty.class_code_counters(course_id, course_code, session)
+    INSERT INTO faculty.class_code_counters(course_id, session)
         VALUES(NEW.course_id, 'M'),
 (NEW.course_id, 'T'),
 (NEW.course_id, 'N');
@@ -340,7 +340,7 @@ CREATE OR REPLACE FUNCTION faculty.set_degree_program_code()
     AS $$
 BEGIN
     SELECT
-        d.degree_program_code INTO NEW.degree_program_code
+        d.code INTO NEW.degree_program_code
     FROM
         faculty.degree_programs d
     WHERE
