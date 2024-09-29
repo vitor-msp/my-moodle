@@ -15,12 +15,13 @@ CREATE TABLE IF NOT EXISTS faculty.instructor_enrollment_code_counters(
 );
 
 CREATE TABLE IF NOT EXISTS faculty.student_enrollment_code_counters(
-    student_enrollment_code_counter_id serial PRIMARY KEY,
     degree_program_id int NOT NULL REFERENCES faculty.degree_programs(degree_program_id),
+    year_semester char(5) NOT NULL DEFAULT general.get_year_semester(CURRENT_DATE),
     degree_program_code char(5) NOT NULL,
     counter int NOT NULL DEFAULT 0 CHECK (counter BETWEEN 0 AND 999),
     created_at timestamp NOT NULL,
-    updated_at timestamp
+    updated_at timestamp,
+    PRIMARY KEY (degree_program_id, year_semester)
 );
 
 CREATE TABLE IF NOT EXISTS faculty.class_code_counters(

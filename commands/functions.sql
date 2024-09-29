@@ -40,16 +40,6 @@ BEGIN
 END;
 $$;
 
-CREATE OR REPLACE FUNCTION general.get_current_year_semester()
-    RETURNS char (
-        5)
-    LANGUAGE plpgsql
-    AS $$
-BEGIN
-    RETURN general.get_year_semester(CURRENT_DATE::date);
-END;
-$$;
-
 CREATE OR REPLACE FUNCTION general.class_is_in_progress(class_year_semester char(5))
     RETURNS boolean
     LANGUAGE plpgsql
@@ -57,7 +47,7 @@ CREATE OR REPLACE FUNCTION general.class_is_in_progress(class_year_semester char
 DECLARE
     current_year_semester char(5);
 BEGIN
-    current_year_semester := general.get_current_year_semester();
+    current_year_semester := general.get_year_semester(CURRENT_DATE);
     RETURN class_year_semester = current_year_semester;
 END;
 $$;
@@ -204,9 +194,12 @@ CREATE OR REPLACE FUNCTION faculty.generate_student_enrollment_code()
     LANGUAGE plpgsql
     AS $$
 DECLARE
+    current_year_semester char(5);
     degree_program_code char(5);
     student_enrollment_code_counter int;
 BEGIN
+    -- gets current year semester
+    current_year_semester := general.get_year_semester(CURRENT_DATE);
     -- gets degree program code
     SELECT
         d.code INTO degree_program_code
@@ -221,10 +214,11 @@ BEGIN
         counter = counter + 1
     WHERE
         degree_program_id = NEW.degree_program_id
+        AND year_semester = current_year_semester
     RETURNING
         counter INTO student_enrollment_code_counter;
     -- generates student enrollment code
-    NEW.enrollment_code := degree_program_code || general.get_current_year_semester() || lpad(student_enrollment_code_counter::text, 3, '0');
+    NEW.enrollment_code := degree_program_code || current_year_semester || lpad(student_enrollment_code_counter::text, 3, '0');
     RETURN NEW;
 END;
 $$;

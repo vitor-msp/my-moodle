@@ -168,24 +168,33 @@ CREATE OR REPLACE PROCEDURE faculty.create_new_counters()
 LANGUAGE plpgsql
 AS $$
 DECLARE
-    course record;
     current_year_semester char(5);
+    course record;
+    degree_program record;
     _sqlstate text;
     _message text;
     _context text;
 BEGIN
-    current_year_semester := general.get_current_year_semester();
+    current_year_semester := general.get_year_semester(CURRENT_DATE);
+    -- creates new counters for class codes
     FOR course IN
     SELECT
         c.course_id
     FROM
         faculty.courses c LOOP
             INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
-                VALUES (course.course_id, 'M', current_year_semester);
-            INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
-                VALUES (course.course_id, 'T', current_year_semester);
-            INSERT INTO faculty.class_code_counters(course_id, session, year_semester)
-                VALUES (course.course_id, 'N', current_year_semester);
+                VALUES (course.course_id, 'M', current_year_semester),
+(course.course_id, 'T', current_year_semester),
+(course.course_id, 'N', current_year_semester);
+        END LOOP;
+    -- creates new counters for student entollment codes
+    FOR degree_program IN
+    SELECT
+        d.degree_program_id
+    FROM
+        faculty.degree_programs d LOOP
+            INSERT INTO faculty.student_enrollment_code_counters(degree_program_id, year_semester)
+                VALUES (degree_program.degree_program_id, current_year_semester);
         END LOOP;
 EXCEPTION
     WHEN OTHERS THEN
