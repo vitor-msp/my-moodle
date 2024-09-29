@@ -1,6 +1,6 @@
 CREATE TABLE IF NOT EXISTS faculty.departments(
     department_id serial PRIMARY KEY,
-    code faculty.department_code UNIQUE,
+    code faculty.department_code NOT NULL UNIQUE,
     name varchar(50) NOT NULL,
     created_at timestamp NOT NULL,
     updated_at timestamp
@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS faculty.departments(
 
 CREATE TABLE IF NOT EXISTS faculty.degree_programs(
     degree_program_id serial PRIMARY KEY,
-    code faculty.degree_program_code UNIQUE,
+    code faculty.degree_program_code NOT NULL UNIQUE,
     name varchar(50) NOT NULL,
     curriculum xml,
     department_id int NOT NULL REFERENCES faculty.departments(department_id),

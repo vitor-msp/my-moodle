@@ -22,7 +22,7 @@ WITH base AS (
         INNER JOIN faculty.students_classes sc USING (student_id)
         INNER JOIN faculty.classes cl USING (class_id)
         INNER JOIN faculty.courses co USING (course_id)
-        LEFT OUTER JOIN faculty.grades gr USING (student_id, class_id)
+        LEFT OUTER JOIN faculty.grades gr USING (class_id, student_id)
     GROUP BY
         st.student_id, st.enrollment_code, pe.name, cl.year_semester, co.course_id, co.code, co.name, cl.class_id, cl.code, cl.total_score, cl.minimum_grade, cl.total_lessons, cl.minimum_lessons
 )
@@ -71,3 +71,4 @@ ORDER BY
     student_name,
     year_semester,
     course_name WITH NO data;
+
