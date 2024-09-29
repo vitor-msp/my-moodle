@@ -62,6 +62,32 @@ BEGIN
 END;
 $$;
 
+CREATE OR REPLACE FUNCTION general.format_telephone(ddd char(2), number char(9))
+    RETURNS char (
+        15)
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    RETURN '(' || ddd || ') ' || substring(number FROM 1 FOR 5) || '-' || substring(number FROM 6 FOR 4);
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION general.format_address(address_input general.format_address_input)
+    RETURNS text
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    address_output text;
+BEGIN
+    address_output := address_input.street || ', ' || address_input.number;
+    IF trim(address_input.addressLine2) <> '' THEN
+        address_output := address_output || ', ' || address_input.addressLine2;
+    END IF;
+    address_output := address_output || ', ' || address_input.neighborhood || ' - ' || address_input.city || ', ' || address_input.state || ', ' || address_input.zipCode || ', ' || address_input.country;
+    RETURN address_output;
+END;
+$$;
+
 -- departments
 CREATE OR REPLACE FUNCTION faculty.create_course_code_counter()
     RETURNS TRIGGER

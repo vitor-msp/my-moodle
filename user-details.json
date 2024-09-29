@@ -1,0 +1,19 @@
+{
+    "gender": "male",
+    "race": "mixed",
+    "email": "email@teste.com",
+    "telephone": {
+        "ddd": "31",
+        "number": "912345678"
+    },
+    "address": {
+        "street": "av amazonas",
+        "number": 156,
+        "addressLine2": "",
+        "neighborhood": "centro",
+        "city": "belo horizonte",
+        "state": "MG",
+        "zipCode": "12345750",
+        "country": "brasil"
+    }
+}

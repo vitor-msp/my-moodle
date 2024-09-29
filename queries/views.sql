@@ -83,3 +83,20 @@ ORDER BY
     lesson_date,
     lesson_initial_time;
 
+-- people info
+CREATE OR REPLACE VIEW general.people_info AS
+SELECT
+    person_id,
+    name,
+    birth_date,
+    document,
+    coalesce(details ->> 'gender', '-') AS gender,
+    coalesce(details ->> 'race', '-') AS race,
+    coalesce(details ->> 'email', '-') AS email,
+    coalesce(general.format_telephone(trim(details -> 'telephone' ->> 'ddd'::text)::char(2), trim(details -> 'telephone' ->> 'number'::text)::char(9)), '-') AS telephone,
+    coalesce(general.format_address((details -> 'address' ->> 'street', details -> 'address' ->> 'number', details -> 'address' ->> 'addressLine2', details -> 'address' ->> 'neighborhood', details -> 'address' ->> 'city', details -> 'address' ->> 'state', details -> 'address' ->> 'zipCode', details -> 'address' ->> 'country')::general.format_address_input), '-') AS address
+FROM
+    general.people
+ORDER BY
+    name WITH cascaded CHECK option;
+

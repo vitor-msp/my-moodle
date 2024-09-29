@@ -35,3 +35,14 @@ CREATE TYPE faculty.enroll_student_in_class_input AS (
     class_id int
 );
 
+CREATE TYPE general.format_address_input AS (
+    street text,
+    number int,
+    addressLine2 text,
+    neighborhood text,
+    city text,
+    state text,
+    zipCode text,
+    country text
+);
+
