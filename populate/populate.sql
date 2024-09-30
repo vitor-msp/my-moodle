@@ -19,26 +19,26 @@ insert into faculty.instructors (person_id,department_id) values (1,1);
 insert into faculty.instructors (person_id,department_id) values (2,2);
 select * from faculty.instructors;
 
-insert into faculty.courses (name,department_id) values ('algoritmos 1',1);
-insert into faculty.courses (name,department_id) values ('redes de computadores 1',1);
-insert into faculty.courses (name,department_id) values ('arquitetura de computadores 1',1);
-insert into faculty.courses (name,department_id) values ('arquitetura de computadores 2',1);
-insert into faculty.courses (name,department_id) values ('gerencia de projetos de software',1);
-insert into faculty.courses (name,department_id) values ('fundamentos de mecanica',2);
-insert into faculty.courses (name,department_id) values ('fundamentos de eletromagnetismo',2);
-insert into faculty.courses (name,department_id) values ('fisica quantica 1',2);
-insert into faculty.courses (name,department_id) values ('fisica quantica 2',2);
+insert into faculty.courses (name,department_id,course_load) values ('algoritmos 1',1,90);
+insert into faculty.courses (name,department_id,course_load) values ('redes de computadores 1',1,90);
+insert into faculty.courses (name,department_id,course_load) values ('arquitetura de computadores 1',1,90);
+insert into faculty.courses (name,department_id,course_load) values ('arquitetura de computadores 2',1,90);
+insert into faculty.courses (name,department_id,course_load) values ('gerencia de projetos de software',1,90);
+insert into faculty.courses (name,department_id,course_load) values ('fundamentos de mecanica',2,90);
+insert into faculty.courses (name,department_id,course_load) values ('fundamentos de eletromagnetismo',2,90);
+insert into faculty.courses (name,department_id,course_load) values ('fisica quantica 1',2,90);
+insert into faculty.courses (name,department_id,course_load) values ('fisica quantica 2',2,90);
 select * from faculty.courses;
 
-insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
-    values ('M','2024-07-01','2024-12-15',2,1);
-insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
-    values ('M','2024-07-01','2024-12-15',2,1);
-insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
-    values ('T','2024-07-01','2024-12-15',6,2);
-insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
-    values ('N','2024-07-01','2024-12-15',6,2);
-select * from faculty.classes;
+-- insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
+--     values ('M','2024-07-01','2024-12-15',2,1);
+-- insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
+--     values ('M','2024-07-01','2024-12-15',2,1);
+-- insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
+--     values ('T','2024-07-01','2024-12-15',6,2);
+-- insert into faculty.classes (class_session,initial_date,final_date,course_id,instructor_id) 
+--     values ('N','2024-07-01','2024-12-15',6,2);
+-- select * from faculty.classes;
 
 insert into faculty.students (person_id,degree_program_id) values (3,2);
 insert into faculty.students (person_id,degree_program_id) values (4,3);
@@ -50,30 +50,25 @@ select * from faculty.instructor_enrollment_code_counters;
 select * from faculty.student_enrollment_code_counters;
 select * from faculty.class_code_counters;
 
-CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 2, 1)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 1, 1)::faculty.create_class_input);
-CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 3, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 2, 1)::faculty.create_class_input);
+CALL faculty.create_class(('T', '2024-07-01', '2024-12-15', 3, 1)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
-CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 7, 1)::faculty.create_class_input);
 CALL faculty.create_class(('T', '2024-07-01', '2024-12-15', 5, 1)::faculty.create_class_input);
+CALL faculty.create_class(('M', '2024-07-01', '2024-12-15', 6, 2)::faculty.create_class_input);
 CALL faculty.create_class(('M', '2025-02-01', '2025-06-01', 4, 1)::faculty.create_class_input);
-CALL faculty.create_class(('M', '2023-02-01', '2023-06-01', 8, 2)::faculty.create_class_input);
-
-CALL faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
-CALL faculty.enroll_student_in_class((1, 12)::faculty.enroll_student_in_class_input);
-CALL faculty.enroll_student_in_class((1, 13)::faculty.enroll_student_in_class_input);
-CALL faculty.enroll_student_in_class((1, 14)::faculty.enroll_student_in_class_input);
-CALL faculty.enroll_student_in_class((1, 26)::faculty.enroll_student_in_class_input);
+CALL faculty.create_class(('M', '2025-02-01', '2025-06-01', 8, 2)::faculty.create_class_input);
 
 REFRESH MATERIALIZED VIEW faculty.academic_transcripts;
 select * from faculty.academic_transcripts;
 
+CALL faculty.enroll_student_in_class((1, 1)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 13)::faculty.enroll_student_in_class_input);
+CALL faculty.enroll_student_in_class((1, 3)::faculty.enroll_student_in_class_input);
+
 update faculty.courses set syllabus='
-    "OSI" => "modelo osi",
-    "FIS" => "camada física",
-    "ENL" => "camada de enlace",
-    "RED" => "camada de rede",
-    "TRA" => "camada de transporte",
-    "APL" => "camada de aplicação",
-    "TIP" => "modelo tcp/ip"
-'::hstore where course_id=2;
+    "ORD" => "ordenacao",
+    "BUS" => "busca",
+    "ARV" => "arvores",
+    "GRF" => "grafos"
+'::hstore where course_id=1;

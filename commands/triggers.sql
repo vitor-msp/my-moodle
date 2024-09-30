@@ -90,3 +90,10 @@ CREATE OR REPLACE TRIGGER set_degree_program_code
     BEFORE INSERT ON faculty.student_enrollment_code_counters
     FOR EACH ROW
     EXECUTE FUNCTION faculty.set_degree_program_code();
+
+-- grades
+CREATE OR REPLACE TRIGGER set_class_id
+    BEFORE INSERT ON faculty.grades
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_class_id();
+

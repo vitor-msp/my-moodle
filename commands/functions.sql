@@ -349,3 +349,33 @@ BEGIN
 END;
 $$;
 
+-- grades
+CREATE OR REPLACE FUNCTION faculty.set_class_id()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+DECLARE
+    class_id int;
+BEGIN
+    IF NEW.exam_id IS NOT NULL THEN
+        SELECT
+            e.class_id INTO class_id
+        FROM
+            faculty.exams e
+        WHERE
+            e.exam_id = NEW.exam_id;
+    ELSIF NEW.activity_id IS NOT NULL THEN
+        SELECT
+            a.class_id INTO class_id
+        FROM
+            faculty.activities a
+        WHERE
+            a.activity_id = NEW.activity_id;
+    ELSE
+        RAISE EXCEPTION 'missing exam_id or activity_id';
+    END IF;
+    NEW.class_id := class_id;
+    RETURN NEW;
+END;
+$$;
+

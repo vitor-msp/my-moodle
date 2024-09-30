@@ -7,6 +7,7 @@ DECLARE
     instructor_is_active boolean;
     instructor_department int;
     course_department int;
+    instructor_teaches_course boolean;
     course_load_used int;
     max_course_load int;
     new_course_load int;
@@ -39,6 +40,18 @@ BEGIN
     -- checks instructor and course departments
     IF instructor_department <> course_department THEN
         RAISE EXCEPTION 'the instructor can only teach classes from his department, instructor_department: %, course_department: %', instructor_department, course_department;
+    END IF;
+    -- gets instructor_course
+    SELECT
+        TRUE INTO instructor_teaches_course
+    FROM
+        faculty.instructors_courses ic
+    WHERE
+        ic.instructor_id = input.instructor_id
+        AND ic.course_id = input.course_id;
+    -- checks if instructor teaches course
+    IF instructor_teaches_course IS NULL OR NOT instructor_teaches_course THEN
+        RAISE EXCEPTION 'the instructor % does not teach the course %', input.instructor_id, input.course_id;
     END IF;
     -- gets course load used by instructor
     SELECT
