@@ -24,6 +24,7 @@ CREATE OR REPLACE FUNCTION general.get_year_semester(input_date date)
     RETURNS char (
         5)
     LANGUAGE plpgsql
+    IMMUTABLE
     AS $$
 DECLARE
     year char(4);
@@ -43,6 +44,7 @@ $$;
 CREATE OR REPLACE FUNCTION general.class_is_in_progress(class_year_semester char(5))
     RETURNS boolean
     LANGUAGE plpgsql
+    STABLE
     AS $$
 DECLARE
     current_year_semester char(5);
@@ -56,6 +58,7 @@ CREATE OR REPLACE FUNCTION general.format_telephone(ddd char(2), number char(9))
     RETURNS char (
         15)
     LANGUAGE plpgsql
+    IMMUTABLE
     AS $$
 BEGIN
     RETURN '(' || ddd || ') ' || substring(number FROM 1 FOR 5) || '-' || substring(number FROM 6 FOR 4);
@@ -65,6 +68,7 @@ $$;
 CREATE OR REPLACE FUNCTION general.format_address(address_input general.format_address_input)
     RETURNS text
     LANGUAGE plpgsql
+    IMMUTABLE
     AS $$
 DECLARE
     address_output text;

@@ -5,7 +5,7 @@ CREATE TABLE IF NOT EXISTS general.people(
     birth_date date NOT NULL,
     document varchar(30) NOT NULL UNIQUE,
     details jsonb,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 

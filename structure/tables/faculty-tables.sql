@@ -2,8 +2,8 @@ CREATE TABLE IF NOT EXISTS faculty.departments(
     department_id serial PRIMARY KEY,
     code faculty.department_code NOT NULL UNIQUE,
     name varchar(50) NOT NULL,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.degree_programs(
@@ -12,8 +12,8 @@ CREATE TABLE IF NOT EXISTS faculty.degree_programs(
     name varchar(50) NOT NULL,
     curriculum xml,
     department_id int NOT NULL REFERENCES faculty.departments(department_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.instructors(
@@ -24,8 +24,8 @@ CREATE TABLE IF NOT EXISTS faculty.instructors(
     max_course_load int NOT NULL DEFAULT 800,
     current_course_load int NOT NULL DEFAULT 0,
     active boolean DEFAULT TRUE,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.courses(
@@ -35,16 +35,16 @@ CREATE TABLE IF NOT EXISTS faculty.courses(
     syllabus hstore,
     department_id int NOT NULL REFERENCES faculty.departments(department_id),
     course_load int NOT NULL,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.prerequisites(
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     prerequisite_id int NOT NULL REFERENCES faculty.courses(course_id),
     PRIMARY KEY (course_id, prerequisite_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.classes(
@@ -60,8 +60,8 @@ CREATE TABLE IF NOT EXISTS faculty.classes(
     minimum_grade real NOT NULL DEFAULT 60,
     total_lessons int NOT NULL DEFAULT 0,
     minimum_lessons int NOT NULL DEFAULT 10,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.lessons(
@@ -70,11 +70,10 @@ CREATE TABLE IF NOT EXISTS faculty.lessons(
     initial_time time NOT NULL,
     final_time time NOT NULL CHECK (final_time > initial_time),
     content_code char(5),
-    content varchar(100),
     description text,
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.students(
@@ -85,8 +84,8 @@ CREATE TABLE IF NOT EXISTS faculty.students(
     max_course_load int NOT NULL DEFAULT 400,
     current_course_load int NOT NULL DEFAULT 0,
     active boolean DEFAULT TRUE,
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.activities(
@@ -96,8 +95,8 @@ CREATE TABLE IF NOT EXISTS faculty.activities(
     final_time time NOT NULL CHECK (final_time > initial_time),
     total_score real NOT NULL CHECK (total_score > 0),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.exams(
@@ -107,8 +106,8 @@ CREATE TABLE IF NOT EXISTS faculty.exams(
     final_time time NOT NULL CHECK (final_time > initial_time),
     total_score real NOT NULL CHECK (total_score > 0),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.grades(
@@ -118,8 +117,8 @@ CREATE TABLE IF NOT EXISTS faculty.grades(
     exam_id int REFERENCES faculty.exams(exam_id),
     activity_id int REFERENCES faculty.activities(activity_id),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 -- relationship tables
@@ -127,39 +126,31 @@ CREATE TABLE IF NOT EXISTS faculty.instructors_courses(
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     PRIMARY KEY (instructor_id, course_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.degree_programs_courses(
     degree_program_id int NOT NULL REFERENCES faculty.degree_programs(degree_program_id),
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
     PRIMARY KEY (degree_program_id, course_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
-);
-
-CREATE TABLE IF NOT EXISTS faculty.degree_programs_students(
-    degree_program_id int NOT NULL REFERENCES faculty.degree_programs(degree_program_id),
-    student_id int NOT NULL REFERENCES faculty.students(student_id),
-    PRIMARY KEY (degree_program_id, student_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.students_classes(
     student_id int NOT NULL REFERENCES faculty.students(student_id),
     class_id int NOT NULL REFERENCES faculty.classes(class_id),
     PRIMARY KEY (student_id, class_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.students_lessons(
     student_id int NOT NULL REFERENCES faculty.students(student_id),
     lesson_id int NOT NULL REFERENCES faculty.lessons(lesson_id),
     PRIMARY KEY (student_id, lesson_id),
-    created_at timestamp NOT NULL,
-    updated_at timestamp
+    created_at timestamptz NOT NULL,
+    updated_at timestamptz
 );
 

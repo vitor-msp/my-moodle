@@ -42,17 +42,6 @@ CREATE OR REPLACE TRIGGER updated_at
     FOR EACH ROW
     EXECUTE FUNCTION general.updated_at();
 
--- degree_programs_students
-CREATE OR REPLACE TRIGGER created_at
-    BEFORE INSERT ON faculty.degree_programs_students
-    FOR EACH ROW
-    EXECUTE FUNCTION general.created_at();
-
-CREATE OR REPLACE TRIGGER updated_at
-    BEFORE UPDATE ON faculty.degree_programs_students
-    FOR EACH ROW
-    EXECUTE FUNCTION general.updated_at();
-
 -- instructors
 CREATE OR REPLACE TRIGGER created_at
     BEFORE INSERT ON faculty.instructors
