@@ -58,7 +58,7 @@ WITH stage3 AS (
             course_name;
 
 -- class schedules
-CREATE OR REPLACE VIEW class_schedules AS
+CREATE OR REPLACE VIEW faculty.class_schedules AS
 SELECT
     co.course_id AS course_id,
     co.code AS course_code,
