@@ -218,3 +218,25 @@ CREATE OR REPLACE TRIGGER updated_at
     FOR EACH ROW
     EXECUTE FUNCTION general.updated_at();
 
+-- materials
+CREATE OR REPLACE TRIGGER created_at
+    BEFORE INSERT ON faculty.materials
+    FOR EACH ROW
+    EXECUTE FUNCTION general.created_at();
+
+CREATE OR REPLACE TRIGGER updated_at
+    BEFORE UPDATE ON faculty.materials
+    FOR EACH ROW
+    EXECUTE FUNCTION general.updated_at();
+
+-- material_requests
+CREATE OR REPLACE TRIGGER created_at
+    BEFORE INSERT ON faculty.material_requests
+    FOR EACH ROW
+    EXECUTE FUNCTION general.created_at();
+
+CREATE OR REPLACE TRIGGER updated_at
+    BEFORE UPDATE ON faculty.material_requests
+    FOR EACH ROW
+    EXECUTE FUNCTION general.updated_at();
+

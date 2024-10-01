@@ -383,3 +383,26 @@ BEGIN
 END;
 $$;
 
+-- material_requests
+CREATE OR REPLACE FUNCTION faculty.set_material_request_fields()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    SELECT
+        c.instructor_id,
+        l.date,
+        l.initial_time::interval - interval '30 min',
+        l.final_time::interval + interval '30 min' INTO NEW.instructor_id,
+        NEW.date,
+        NEW.initial_time,
+        NEW.final_time
+    FROM
+        faculty.lessons l
+        INNER JOIN faculty.classes c USING(class_id)
+    WHERE
+        l.lesson_id = NEW.lesson_id;
+    RETURN NEW;
+END;
+$$;
+
