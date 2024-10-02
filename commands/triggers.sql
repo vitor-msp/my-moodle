@@ -97,6 +97,12 @@ CREATE OR REPLACE TRIGGER set_class_id
     FOR EACH ROW
     EXECUTE FUNCTION faculty.set_class_id();
 
+-- materials
+CREATE OR REPLACE TRIGGER set_available_quantity
+    BEFORE INSERT ON faculty.materials
+    FOR EACH ROW
+    EXECUTE FUNCTION faculty.set_available_quantity();
+
 -- material_requests
 CREATE OR REPLACE TRIGGER set_fields
     BEFORE INSERT ON faculty.material_requests

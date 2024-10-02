@@ -61,3 +61,11 @@ CREATE INDEX IF NOT EXISTS academic_transcripts_student_id ON faculty.academic_t
 
 CREATE INDEX IF NOT EXISTS academic_transcripts_class_id ON faculty.academic_transcripts USING btree(class_id);
 
+-- materials
+CREATE INDEX IF NOT EXISTS materials_name ON faculty.materials USING btree(name);
+
+CREATE INDEX IF NOT EXISTS materials_department_id ON faculty.materials USING btree(department_id);
+
+-- material_requests
+CREATE INDEX IF NOT EXISTS material_requests_instructor_id ON faculty.material_requests USING btree(instructor_id);
+

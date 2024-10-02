@@ -158,19 +158,22 @@ CREATE TABLE IF NOT EXISTS faculty.materials(
     material_id serial PRIMARY KEY,
     name varchar(30) NOT NULL,
     department_id int REFERENCES faculty.departments(department_id),
+    total_quantity int NOT NULL,
+    available_quantity int NOT NULL,
     created_at timestamptz NOT NULL,
     updated_at timestamptz
 );
 
 CREATE TABLE IF NOT EXISTS faculty.material_requests(
-    material_request_id serial PRIMARY KEY,
     material_id int NOT NULL REFERENCES faculty.materials(material_id),
-    instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
     lesson_id int NOT NULL REFERENCES faculty.lessons(lesson_id),
+    PRIMARY KEY (material_id, lesson_id),
+    instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
+    quantity int NOT NULL,
     date date NOT NULL,
     initial_time time NOT NULL,
     final_time time NOT NULL,
-    return_date date,
+    return_timestamp timestamptz,
     created_at timestamptz NOT NULL,
     updated_at timestamptz
 );

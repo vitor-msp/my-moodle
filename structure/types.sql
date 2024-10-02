@@ -46,3 +46,13 @@ CREATE TYPE general.format_address_input AS (
     country text
 );
 
+CREATE TYPE faculty.request_material_input AS (
+    material_id int,
+    lesson_id int,
+    quantity int
+);
+
+CREATE TYPE faculty.return_material_input AS (
+    material_id int,
+    lesson_id int
+);

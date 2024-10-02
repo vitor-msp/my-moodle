@@ -383,6 +383,17 @@ BEGIN
 END;
 $$;
 
+-- materials
+CREATE OR REPLACE FUNCTION faculty.set_available_quantity()
+    RETURNS TRIGGER
+    LANGUAGE plpgsql
+    AS $$
+BEGIN
+    NEW.available_quantity = NEW.total_quantity;
+    RETURN NEW;
+END;
+$$;
+
 -- material_requests
 CREATE OR REPLACE FUNCTION faculty.set_material_request_fields()
     RETURNS TRIGGER

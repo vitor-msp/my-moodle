@@ -228,3 +228,146 @@ END;
 
 $$;
 
+CREATE OR REPLACE PROCEDURE faculty.request_material_from_department(input faculty.request_material_input)
+LANGUAGE plpgsql
+SET default_transaction_isolation TO 'repeatable read'
+AS $$
+DECLARE
+    lesson_department_id int;
+    material_department_id int;
+    available_quantity int;
+    new_available_quantity int;
+    _sqlstate text;
+    _message text;
+    _context text;
+BEGIN
+    -- gets lesson deparment
+    SELECT
+        co.department_id INTO lesson_department_id
+    FROM
+        faculty.lessons le
+        INNER JOIN faculty.classes cl USING (class_id)
+        INNER JOIN faculty.courses co USING (course_id)
+    WHERE
+        le.lesson_id = input.lesson_id;
+    -- gets material info
+    SELECT
+        m.department_id,
+        m.available_quantity INTO material_department_id,
+        available_quantity
+    FROM
+        faculty.materials m
+    WHERE
+        m.material_id = input.material_id;
+    -- checks lesson and material department
+    IF lesson_department_id <> material_department_id THEN
+        RAISE EXCEPTION 'lesson and material must be from the same department';
+    END IF;
+    -- checks if stock is available
+    new_available_quantity := available_quantity - input.quantity;
+    IF new_available_quantity IS NULL OR new_available_quantity < 0 THEN
+        RAISE EXCEPTION 'material % without available stock', input.material_id;
+    END IF;
+    -- updates stock
+    UPDATE
+        faculty.materials
+    SET
+        available_quantity = new_available_quantity
+    WHERE
+        material_id = input.material_id;
+    -- inserts material request
+    INSERT INTO faculty.material_requests(material_id, lesson_id, quantity)
+        VALUES (input.material_id, input.lesson_id, input.quantity);
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS _sqlstate = returned_sqlstate,
+        _message = message_text,
+        _context = pg_exception_context;
+    RAISE EXCEPTION 'sqlstate: %, message: %, context: %', _sqlstate, _message, _context;
+ROLLBACK;
+END;
+
+$$;
+
+CREATE OR REPLACE PROCEDURE faculty.request_global_material(input faculty.request_material_input)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    available_quantity int;
+    new_available_quantity int;
+    _sqlstate text;
+    _message text;
+    _context text;
+BEGIN
+    -- gets material info
+    SELECT
+        m.available_quantity INTO available_quantity
+    FROM
+        faculty.materials m
+    WHERE
+        m.material_id = input.material_id
+        AND m.department_id IS NULL
+    FOR UPDATE;
+    -- checks if stock is available
+    new_available_quantity := available_quantity - input.quantity;
+    IF new_available_quantity IS NULL OR new_available_quantity < 0 THEN
+        RAISE EXCEPTION 'material % without available stock', input.material_id;
+    END IF;
+    -- updates stock
+    UPDATE
+        faculty.materials
+    SET
+        available_quantity = new_available_quantity
+    WHERE
+        material_id = input.material_id;
+    -- inserts material request
+    INSERT INTO faculty.material_requests(material_id, lesson_id, quantity)
+        VALUES (input.material_id, input.lesson_id, input.quantity);
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS _sqlstate = returned_sqlstate,
+        _message = message_text,
+        _context = pg_exception_context;
+    RAISE EXCEPTION 'sqlstate: %, message: %, context: %', _sqlstate, _message, _context;
+ROLLBACK;
+END;
+
+$$;
+
+CREATE OR REPLACE PROCEDURE faculty.return_material(input faculty.return_material_input)
+LANGUAGE plpgsql
+AS $$
+DECLARE
+    used_quantity int;
+    _sqlstate text;
+    _message text;
+    _context text;
+BEGIN
+    -- updates material request
+    UPDATE
+        faculty.material_requests
+    SET
+        return_timestamp = CURRENT_TIMESTAMP
+    WHERE
+        material_id = input.material_id
+        AND lesson_id = input.lesson_id
+    RETURNING
+        quantity INTO used_quantity;
+    -- updates stock
+    UPDATE
+        faculty.materials
+    SET
+        available_quantity = available_quantity + used_quantity
+    WHERE
+        material_id = input.material_id;
+EXCEPTION
+    WHEN OTHERS THEN
+        GET STACKED DIAGNOSTICS _sqlstate = returned_sqlstate,
+        _message = message_text,
+        _context = pg_exception_context;
+    RAISE EXCEPTION 'sqlstate: %, message: %, context: %', _sqlstate, _message, _context;
+ROLLBACK;
+END;
+
+$$;
+
