@@ -1,5 +1,5 @@
 -- people
-CREATE INDEX IF NOT EXISTS people_name ON general.people USING btree(name);
+CREATE INDEX IF NOT EXISTS people_name ON general.people USING gist(name gist_trgm_ops);
 
 -- student_enrollment_code_counters
 CREATE INDEX IF NOT EXISTS student_enrollment_code_counters_degree_program_id ON faculty.student_enrollment_code_counters USING btree(degree_program_id);
@@ -62,7 +62,7 @@ CREATE INDEX IF NOT EXISTS academic_transcripts_student_id ON faculty.academic_t
 CREATE INDEX IF NOT EXISTS academic_transcripts_class_id ON faculty.academic_transcripts USING btree(class_id);
 
 -- materials
-CREATE INDEX IF NOT EXISTS materials_name ON faculty.materials USING btree(name);
+CREATE INDEX IF NOT EXISTS materials_name ON faculty.materials USING gist(name gist_trgm_ops);
 
 CREATE INDEX IF NOT EXISTS materials_department_id ON faculty.materials USING btree(department_id);
 
