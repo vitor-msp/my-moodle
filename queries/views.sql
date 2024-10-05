@@ -1,4 +1,3 @@
--- courses of degree programs
 CREATE OR REPLACE VIEW faculty.courses_of_degree_programs AS
 SELECT
     d.degree_program_id AS degree_program_id,
@@ -15,7 +14,6 @@ ORDER BY
     degree_program_name,
     course_name;
 
--- curriculums
 CREATE OR REPLACE VIEW faculty.curriculums AS
 WITH stage3 AS (
     WITH stage2 AS (
@@ -57,7 +55,6 @@ WITH stage3 AS (
             period,
             course_name;
 
--- class schedules
 CREATE OR REPLACE VIEW faculty.class_schedules AS
 SELECT
     co.course_id AS course_id,
@@ -83,7 +80,6 @@ ORDER BY
     lesson_date,
     lesson_initial_time;
 
--- people info
 CREATE OR REPLACE VIEW general.people_info AS
 SELECT
     person_id,
@@ -100,7 +96,6 @@ FROM
 ORDER BY
     name WITH cascaded CHECK option;
 
--- grade interval
 CREATE VIEW faculty.grade_intervals AS
 WITH base AS (
     SELECT

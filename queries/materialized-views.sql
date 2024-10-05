@@ -1,4 +1,3 @@
--- academic transcripts
 CREATE MATERIALIZED VIEW faculty.academic_transcripts AS
 WITH base AS (
     SELECT

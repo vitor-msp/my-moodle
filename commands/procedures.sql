@@ -1,4 +1,3 @@
--- missing validate if instructor teaches course
 CREATE OR REPLACE PROCEDURE faculty.create_class(input faculty.create_class_input)
 LANGUAGE plpgsql
 SET default_transaction_isolation TO 'serializable'
