@@ -417,3 +417,43 @@ BEGIN
 END;
 $$;
 
+-- classify_grade
+CREATE OR REPLACE FUNCTION faculty.classify_grade_state(state faculty.classify_grade_state, grade float)
+    RETURNS faculty.classify_grade_state
+    LANGUAGE plpgsql
+    IMMUTABLE
+    AS $$
+BEGIN
+    IF grade < 20 THEN
+        state.status_e_quantity := state.status_e_quantity + 1;
+    ELSIF grade < 40 THEN
+        state.status_d_quantity := state.status_d_quantity + 1;
+    ELSIF grade < 60 THEN
+        state.status_c_quantity := state.status_c_quantity + 1;
+    ELSIF grade < 80 THEN
+        state.status_b_quantity := state.status_b_quantity + 1;
+    ELSE
+        state.status_a_quantity := state.status_a_quantity + 1;
+    END IF;
+    RETURN state;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION faculty.classify_grade_final(state faculty.classify_grade_state)
+    RETURNS faculty.classify_grade_state
+    LANGUAGE plpgsql
+    IMMUTABLE
+    AS $$
+DECLARE
+    total_grades numeric(3, 2);
+BEGIN
+    total_grades := state.status_a_quantity + state.status_b_quantity + state.status_c_quantity + state.status_d_quantity + state.status_e_quantity;
+    state.status_a_percent := round(state.status_a_quantity / total_grades, 2);
+    state.status_b_percent := round(state.status_b_quantity / total_grades, 2);
+    state.status_c_percent := round(state.status_c_quantity / total_grades, 2);
+    state.status_d_percent := round(state.status_d_quantity / total_grades, 2);
+    state.status_e_percent := round(state.status_e_quantity / total_grades, 2);
+    RETURN state;
+END;
+$$;
+

@@ -56,3 +56,16 @@ CREATE TYPE faculty.return_material_input AS (
     material_id int,
     lesson_id int
 );
+
+CREATE TYPE faculty.classify_grade_state AS (
+    status_a_quantity int,
+    status_b_quantity int,
+    status_c_quantity int,
+    status_d_quantity int,
+    status_e_quantity int,
+    status_a_percent numeric( 3, 2),
+    status_b_percent numeric(3, 2),
+    status_c_percent numeric(3, 2),
+    status_d_percent numeric(3, 2),
+    status_e_percent numeric(3, 2));
+

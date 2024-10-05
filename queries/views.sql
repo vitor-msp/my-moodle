@@ -100,3 +100,47 @@ FROM
 ORDER BY
     name WITH cascaded CHECK option;
 
+-- grade interval
+CREATE VIEW faculty.grade_intervals AS
+WITH base AS (
+    SELECT
+        a.course_id,
+        a.course_code,
+        a.course_name,
+        a.class_id,
+        a.class_code,
+        a.year_semester,
+        faculty.classify_grades(a.student_grade) AS classified_grades
+    FROM
+        faculty.academic_transcripts a
+    GROUP BY
+        a.course_id,
+        a.course_code,
+        a.course_name,
+        a.class_id,
+        a.class_code,
+        a.year_semester
+)
+SELECT
+    course_id,
+    course_code,
+    course_name,
+    class_id,
+    class_code,
+    year_semester,
+(classified_grades).status_a_quantity AS status_a_quantity,
+(classified_grades).status_b_quantity AS status_b_quantity,
+(classified_grades).status_c_quantity AS status_c_quantity,
+(classified_grades).status_d_quantity AS status_d_quantity,
+(classified_grades).status_e_quantity AS status_e_quantity,
+(classified_grades).status_a_percent * 100 || '%' AS status_a_percent,
+(classified_grades).status_b_percent * 100 || '%' AS status_b_percent,
+(classified_grades).status_c_percent * 100 || '%' AS status_c_percent,
+(classified_grades).status_d_percent * 100 || '%' AS status_d_percent,
+(classified_grades).status_e_percent * 100 || '%' AS status_e_percent
+FROM
+    base
+ORDER BY
+    base.course_name,
+    base.class_id;
+
