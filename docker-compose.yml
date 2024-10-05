@@ -1,0 +1,14 @@
+version: "3"
+
+services:
+  my-moodle:
+    container_name: my-moodle
+    image: vitormsp/my-moodle
+    build: .
+    environment:
+      POSTGRES_PASSWORD: my-moodle
+    ports:
+      - 5432:5432
+    volumes:
+      - ./db-dump.sql:/docker-entrypoint-initdb.d/init.sql
+      - ./pg-data:/var/lib/postgresql/data
