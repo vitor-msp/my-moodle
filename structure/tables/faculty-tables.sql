@@ -121,7 +121,6 @@ CREATE TABLE IF NOT EXISTS faculty.grades(
     updated_at timestamptz
 );
 
--- relationship tables
 CREATE TABLE IF NOT EXISTS faculty.instructors_courses(
     instructor_id int NOT NULL REFERENCES faculty.instructors(instructor_id),
     course_id int NOT NULL REFERENCES faculty.courses(course_id),
